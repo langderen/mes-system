@@ -43,8 +43,6 @@
 
 <script type="text/html" id="js-record-table-toolbar-right">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="design">节点设计</a>
-    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="definition">定义</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
 </script>
 
@@ -95,22 +93,6 @@ layui.use(['form', 'table', 'spLayer', 'spTable'], function () {
             spLayer.open({
                 title: '编辑流程',
                 area: ['960px', '720px'],
-                spWhere: {id: data.id},
-                content: '${request.contextPath}/basedata/flow/add-or-update-ui'
-            });
-        }
-        if (obj.event === 'design') {
-            spLayer.open({
-                title: '流程节点设计',
-                area: ['900px', '640px'],
-                spWhere: {id: data.id},
-                content: '${request.contextPath}/basedata/flow/process/list-ui'
-            });
-        }
-        if (obj.event === 'definition') {
-            spLayer.open({
-                title: '流程定义',
-                area: ['900px', '640px'],
                 spWhere: {id: data.id},
                 content: '${request.contextPath}/basedata/flow/add-or-update-ui'
             });

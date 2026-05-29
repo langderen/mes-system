@@ -48,6 +48,11 @@
     </div>
 </div>
 
+<script type="text/html" id="js-record-table-toolbar-top">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add">新增流程</button>
+    </div>
+</script>
 <script type="text/html" id="js-record-table-toolbar-right">
     <a class="layui-btn layui-btn-xs" lay-event="design">设计节点</a>
 </script>
@@ -78,9 +83,19 @@ layui.use(['form', 'table', 'spLayer', 'spTable'], function () {
         if (obj.event === 'design') {
             spLayer.open({
                 title: '流程节点设计',
-                area: ['900px', '640px'],
+                area: ['90%', '90%'],
                 spWhere: {id: obj.data.id},
                 content: '${request.contextPath}/basedata/flow/process/design-ui'
+            });
+        }
+
+    });
+    table.on('toolbar(js-record-table-filter)', function (obj) {
+        if (obj.event === 'add') {
+            spLayer.open({
+                title: '新增流程',
+                area: ['960px', '720px'],
+                content: '${request.contextPath}/basedata/flow/add-or-update-ui'
             });
         }
     });
