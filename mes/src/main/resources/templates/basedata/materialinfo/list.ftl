@@ -104,6 +104,13 @@
                 }, {
                     field: 'safetyStock', title: '安全库存', width: 100
                 }, {
+                    field: 'imageUrl', title: '图片', width: 80, templet: function (d) {
+                        if (d.imageUrl) {
+                            return '<img src="${request.contextPath}' + d.imageUrl + '" style="width:50px;height:50px;object-fit:cover;border-radius:4px;cursor:pointer;" onclick="layer.open({type:1,title:\'物料图片\',area:[\'400px\',\'400px\'],shadeClose:true,content:\'<img src=\\\'${request.contextPath}' + d.imageUrl + '\\\' style=\\\'width:100%;height:100%;object-fit:contain;\\\'/>\'});">';
+                        }
+                        return '<span style="color:#999;">无</span>';
+                    }
+                }, {
                     field: 'createUsername', title: '创建人', width: 100
                 }, {
                     field: 'createTime', title: '创建时间', width: 170

@@ -108,6 +108,26 @@
                     </div>
 
                     <div class="layui-form-item">
+                        <label class="layui-form-label">物料图片</label>
+                        <div class="layui-input-inline">
+                            <input type="hidden" id="js-image-url" name="imageUrl" value="${result.imageUrl!}">
+                            <div id="js-image-preview" style="margin-bottom:8px;">
+                                <#if result?? && result.imageUrl??>
+                                <img src="${request.contextPath}${result.imageUrl}" style="max-width:200px;max-height:150px;border:1px solid #e6e6e6;border-radius:4px;">
+                                <#else>
+                                <div style="width:200px;height:150px;border:1px dashed #e6e6e6;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#999;font-size:13px;">暂无图片</div>
+                                </#if>
+                            </div>
+                            <button type="button" class="layui-btn layui-btn-sm" id="js-upload-btn">
+                                <i class="layui-icon">&#xe67c;</i>选择图片
+                            </button>
+                            <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="js-remove-btn" style="<#if !(result??) || !(result.imageUrl??)>display:none;</#if>">
+                                <i class="layui-icon">&#xe640;</i>移除
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
                         <label for="js-is-deleted" class="layui-form-label sp-required">状态</label>
                         <div class="layui-input-block" id="js-is-deleted">
                             <input type="radio" name="deleted" value="0" title="正常"
@@ -131,8 +151,9 @@
     </div>
 </div>
 <script>
-    layui.use(['form'], function () {
+    layui.use(['form', 'upload'], function () {
         var form = layui.form;
+        var upload = layui.upload;
         var savedMatType = '${result.matType!}';
         var savedMatSource = '${result.matSource!}';
         var savedTexture = '${result.texture!}';
@@ -159,6 +180,38 @@
         loadDictDropdown('material_type', 'js-matType', savedMatType);
         loadDictDropdown('material_source', 'js-matSource', savedMatSource);
         loadDictDropdown('material_texture', 'js-texture', savedTexture);
+
+        var uploadInst = upload.render({
+            elem: '#js-upload-btn',
+            url: '${request.contextPath}/admin/common/upload',
+            accept: 'images',
+            acceptMime: 'image/*',
+            size: 5120,
+            before: function () {
+                layer.load();
+            },
+            done: function (res) {
+                layer.closeAll('loading');
+                if (res.code === 0) {
+                    var url = res.data;
+                    $('#js-image-url').val(url);
+                    $('#js-image-preview').html('<img src="${request.contextPath}' + url + '" style="max-width:200px;max-height:150px;border:1px solid #e6e6e6;border-radius:4px;">');
+                    $('#js-remove-btn').show();
+                } else {
+                    layer.msg(res.msg || '上传失败', {icon: 2});
+                }
+            },
+            error: function () {
+                layer.closeAll('loading');
+                layer.msg('上传出错', {icon: 2});
+            }
+        });
+
+        $('#js-remove-btn').on('click', function () {
+            $('#js-image-url').val('');
+            $('#js-image-preview').html('<div style="width:200px;height:150px;border:1px dashed #e6e6e6;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#999;font-size:13px;">暂无图片</div>');
+            $(this).hide();
+        });
 
         form.render();
 

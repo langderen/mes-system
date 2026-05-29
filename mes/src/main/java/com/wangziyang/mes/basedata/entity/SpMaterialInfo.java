@@ -33,6 +33,8 @@ public class SpMaterialInfo extends BaseEntity {
 
     private String descr;
 
+    private String imageUrl;
+
     @TableField(value = "is_deleted")
     private String deleted;
 
@@ -130,5 +132,13 @@ public class SpMaterialInfo extends BaseEntity {
 
     public void setDeleted(String deleted) {
         this.deleted = deleted;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
