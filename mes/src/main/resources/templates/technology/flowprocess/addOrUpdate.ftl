@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -96,7 +96,7 @@
             top: 0;
             width: 1600px;
             height: 1000px;
-            z-index: 1;
+            z-index: 10;
             pointer-events: none;
             overflow: visible;
         }
@@ -109,7 +109,7 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.05);
             z-index: 2;
             cursor: move;
-            overflow: hidden;
+            overflow: visible;
         }
         .node.active { border-color: var(--accent); box-shadow: 0 10px 28px rgba(47,84,235,0.18); }
         .node-head {
@@ -121,22 +121,31 @@
             color: #fff;
             font-size: 12px;
             background: linear-gradient(135deg, #4c6fff, #2f54eb);
+            border-radius: 12px 12px 0 0;
         }
         .node-body { padding: 10px; font-size: 13px; color: #333; line-height: 1.5; }
         .node-desc { color: #999; font-size: 12px; word-break: break-all; }
         .node-del { border: 0; background: transparent; color: #fff; cursor: pointer; }
         .anchor {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: #fff;
             border: 2px solid var(--accent);
             box-sizing: border-box;
             cursor: crosshair;
+            z-index: 3;
+            transition: transform 0.15s, background 0.15s;
         }
-        .anchor.start { left: -6px; top: 50%; transform: translateY(-50%); }
-        .anchor.end { right: -6px; top: 50%; transform: translateY(-50%); }
+        .anchor:hover {
+            background: var(--accent);
+            transform: translateY(-50%) scale(1.3);
+        }
+        .anchor.start { left: -7px; top: 50%; transform: translateY(-50%); }
+        .anchor.end { right: -7px; top: 50%; transform: translateY(-50%); }
+        .anchor.start:hover { transform: translateY(-50%) scale(1.3); }
+        .anchor.end:hover { transform: translateY(-50%) scale(1.3); }
         .prop-item { margin-bottom: 12px; }
         .prop-item label { display: block; margin-bottom: 6px; color: #555; font-size: 13px; }
         .mini-badge {
@@ -203,7 +212,7 @@
             <input type="hidden" id="js-button-code" value="${flow.buttonCode!}">
             <input type="hidden" id="js-script-content" value="${flow.scriptContent!}">
             <input type="hidden" id="js-state" value="${flow.state!'0'}">
-            <input type="hidden" id="js-process" value="${flow.process!}">
+            <input type="hidden" id="js-process" value="${(flow.process!)?html}">
 
             <div class="prop-item">
                 <label>当前节点</label>
@@ -231,6 +240,7 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="js-connect">连到下一个</button>
             </div>
             <div class="hint">保存后会把流程图结构序列化到 `process` 字段，后端接口保持不变。</div>
+            <button type="button" id="js-submit" style="display:none;"></button>
         </div>
     </div>
 </div>
@@ -335,8 +345,14 @@ layui.use(['form', 'layer'], function () {
         $empty.toggle(state.nodes.length === 0);
     }
 
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+
     function renderLinks() {
-        $svg.find('path.flow-link').remove();
+        // Use native DOM query — jQuery .find() is unreliable on SVG namespace elements
+        var existing = $svg[0].querySelectorAll('path.flow-link');
+        for (var i = existing.length - 1; i >= 0; i--) {
+            existing[i].parentNode.removeChild(existing[i]);
+        }
         state.links.forEach(function (link) {
             var from = nodeById(link.from);
             var to = nodeById(link.to);
@@ -345,7 +361,14 @@ layui.use(['form', 'layer'], function () {
             var b = linkPoint(to, 'left');
             var midX = a.x + (b.x - a.x) * 0.5;
             var d = 'M ' + a.x + ' ' + a.y + ' C ' + midX + ' ' + a.y + ', ' + midX + ' ' + b.y + ', ' + b.x + ' ' + b.y;
-            $svg.append('<path class="flow-link" d="' + d + '" stroke="#2f54eb" stroke-width="3" fill="none" marker-end="url(#js-arrow)"></path>');
+            var path = document.createElementNS(SVG_NS, 'path');
+            path.setAttribute('class', 'flow-link');
+            path.setAttribute('d', d);
+            path.setAttribute('stroke', '#2f54eb');
+            path.setAttribute('stroke-width', '3');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('marker-end', 'url(#js-arrow)');
+            $svg[0].appendChild(path);
         });
     }
 
@@ -365,7 +388,8 @@ layui.use(['form', 'layer'], function () {
                     '<span class="anchor start"></span>' +
                     '<span class="anchor end"></span>' +
                 '</div>';
-            $canvas.append(html);
+            // Insert before the SVG so the SVG layer (z-index:10) always stays on top
+            $svg.before(html);
         });
         bindNodeEvents();
         refreshEmpty();
@@ -390,6 +414,12 @@ layui.use(['form', 'layer'], function () {
     }
 
     function addNode(item) {
+        // Calculate a non-overlapping position: offset each new node by 190px horizontally,
+        // wrapping to a new row every 5 nodes so they never stack on top of each other.
+        var col = state.nodes.length % 5;
+        var row = Math.floor(state.nodes.length / 5);
+        var baseX = Math.max(20, $wrap.scrollLeft() + 20);
+        var baseY = Math.max(20, $wrap.scrollTop() + 20);
         var node = {
             id: 'node_' + Date.now() + '_' + state.seq++,
             operId: item.id || item.value || '',
@@ -397,8 +427,8 @@ layui.use(['form', 'layer'], function () {
             desc: item.title || '',
             type: 'task',
             sortNo: state.nodes.length + 1,
-            x: Math.max(20, $wrap.scrollLeft() + 120),
-            y: Math.max(20, $wrap.scrollTop() + 100)
+            x: baseX + col * 190,
+            y: baseY + row * 120
         };
         state.nodes.push(node);
         state.selectedId = node.id;
@@ -474,15 +504,20 @@ layui.use(['form', 'layer'], function () {
             e.stopPropagation();
             removeNode($(this).closest('.node').data('id'));
         });
-        $canvas.find('.node .anchor.end').on('click', function (e) {
+        $canvas.find('.node .anchor').on('click', function (e) {
             e.stopPropagation();
+            e.preventDefault();
             var id = $(this).closest('.node').data('id');
-            if (!state.connectFrom) {
-                state.connectFrom = id;
-                layer.msg('已选起点，再点击目标节点完成连线');
-                return;
+            if ($(this).hasClass('end') || $(this).hasClass('start')) {
+                if (!state.connectFrom) {
+                    state.connectFrom = id;
+                    layer.msg('已选起点，再点击目标节点的锚点完成连线');
+                    return;
+                }
+                if (state.connectFrom !== id) {
+                    connectNodes(state.connectFrom, id);
+                }
             }
-            connectNodes(state.connectFrom, id);
         });
     }
 
@@ -625,6 +660,14 @@ layui.use(['form', 'layer'], function () {
     });
 
     $('#js-save').on('click', function () {
+        doSave();
+    });
+
+    $('#js-submit').on('click', function () {
+        doSave();
+    });
+
+    function doSave() {
         syncProcess();
         if (!$('#js-flow-id').val() && !$('#js-flow-code').val()) {
             layer.msg('请先在流程定义中创建流程，再进行节点设计');
@@ -647,6 +690,7 @@ layui.use(['form', 'layer'], function () {
             data: data,
             success: function (result) {
                 if (result.code === 0) {
+                    window.spChildFrameResult = result;
                     setStatus('保存成功', true);
                     layer.msg('保存成功');
                 } else {
@@ -657,7 +701,7 @@ layui.use(['form', 'layer'], function () {
                 layer.msg('保存失败，请检查后端接口');
             }
         });
-    });
+    }
 });
 </script>
 </body>

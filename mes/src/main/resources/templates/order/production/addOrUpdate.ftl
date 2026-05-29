@@ -96,7 +96,9 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="layui-col-xs12" style="text-align:center;margin-top:20px;">
+                    <button id="js-submit" class="layui-btn" lay-submit lay-filter="js-submit-filter" style="display:none;"></button>
+                </div>
             </div>
         </form>
     </div>
