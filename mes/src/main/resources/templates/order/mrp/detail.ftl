@@ -10,6 +10,9 @@
 </head>
 <body>
 <div style="padding:16px;">
+    <#if !result??>
+        <div style="padding:40px;text-align:center;color:#999;">未找到MRP数据</div>
+    <#else>
     <table class="layui-table">
         <tbody>
         <tr><th>MRP编号</th><td>${result.mrpNo!}</td></tr>
@@ -21,8 +24,10 @@
         <tr><th>物料名称</th><td>${result.partName!}</td></tr>
         <tr><th>需求数量</th><td>${result.demandQty!}</td></tr>
         <tr><th>单位</th><td>${result.unit!}</td></tr>
+        <tr><th>创建时间</th><td>${result.createTime!?string('yyyy-MM-dd HH:mm:ss')}</td></tr>
         </tbody>
     </table>
+    </#if>
 </div>
 </body>
 </html>
