@@ -61,9 +61,11 @@ public class SpOrderController extends BaseController {
 
     @GetMapping("/add-or-update-ui")
     public String addOrUpdateUI(Model model, String id) {
-        if (StringUtils.isNotBlank(id)) {
-            model.addAttribute("result", orderService.getById(id));
+        SpOrder result = StringUtils.isNotBlank(id) ? orderService.getById(id) : new SpOrder();
+        if (result == null) {
+            result = new SpOrder();
         }
+        model.addAttribute("result", result);
         return "order/production/addOrUpdate";
     }
 
