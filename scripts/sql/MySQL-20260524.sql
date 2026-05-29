@@ -161,3 +161,34 @@ CREATE TABLE IF NOT EXISTS `sp_flow_category` (
 -- 增量迁移：sp_flow.process 列从 varchar(255) 改为 text，以支持流程图JSON数据
 -- =============================================
 ALTER TABLE `sp_flow` MODIFY COLUMN `process` text COMMENT '流程绘制JSON';
+
+-- =============================================
+-- 流程表单表
+-- =============================================
+CREATE TABLE IF NOT EXISTS `sp_flow_form` (
+  `id` varchar(64) NOT NULL COMMENT '主键id',
+  `flow_id` varchar(64) NOT NULL COMMENT '流程ID',
+  `form_name` varchar(255) NOT NULL COMMENT '表单名称',
+  `form_key` varchar(128) NOT NULL COMMENT '表单key',
+  `form_type` varchar(32) DEFAULT 'default' COMMENT '表单类型(default/script/url)',
+  `flow_title` varchar(255) DEFAULT NULL COMMENT '流程标题',
+  `pc_form_url` varchar(512) DEFAULT NULL COMMENT 'PC表单地址',
+  `mobile_form_url` varchar(512) DEFAULT NULL COMMENT '手机表单地址',
+  `init_script` text COMMENT '表单初始化脚本',
+  `approve_script` text COMMENT '审批通过脚本',
+  `reject_script` text COMMENT '审批退回脚本',
+  `end_script` text COMMENT '流程结束脚本',
+  `skip_first` tinyint(1) DEFAULT 0 COMMENT '跳过第一个环节',
+  `skip_same_handler` tinyint(1) DEFAULT 0 COMMENT '跳过相同处理人',
+  `allow_return` tinyint(1) DEFAULT 1 COMMENT '允许退回',
+  `allow_transfer` tinyint(1) DEFAULT 1 COMMENT '允许转办',
+  `allow_delegate` tinyint(1) DEFAULT 1 COMMENT '允许委托',
+  `allow_withdraw` tinyint(1) DEFAULT 1 COMMENT '允许撤回',
+  `is_deleted` varchar(2) NOT NULL DEFAULT '0' COMMENT '逻辑删除',
+  `create_time` datetime(0) NOT NULL COMMENT '创建时间',
+  `create_username` varchar(64) NOT NULL COMMENT '创建人',
+  `update_time` datetime(0) NOT NULL COMMENT '更新时间',
+  `update_username` varchar(64) NOT NULL COMMENT '更新人',
+  PRIMARY KEY (`id`),
+  KEY `idx_flow_id` (`flow_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='流程表单表';
