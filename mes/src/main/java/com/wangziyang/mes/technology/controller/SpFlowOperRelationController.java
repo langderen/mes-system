@@ -63,6 +63,20 @@ public class SpFlowOperRelationController extends BaseController {
         return "technology/flowprocess/list";
     }
 
+    @GetMapping("/design-ui")
+    public String designUI(Model model, SpFlow record) throws Exception {
+        List<SpOperVo> allSpOperVos = iSpFlowOperRelationService.allOperViewServer();
+        model.addAttribute("allOper", allSpOperVos);
+        model.addAttribute("flow", new SpFlow());
+        if (StringUtils.isNotEmpty(record.getId())) {
+            SpFlow flowbyId = iSpFlowService.getById(record.getId());
+            model.addAttribute("flow", flowbyId);
+            List<SpOperVo> currentSpOperVos = iSpFlowOperRelationService.currentOperViewServer(record.getId());
+            model.addAttribute("currentOper", currentSpOperVos);
+        }
+        return "technology/flowprocess/addOrUpdate";
+    }
+
 
     /**
      * 流程与工序关系管理编辑界面
