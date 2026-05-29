@@ -104,7 +104,7 @@
                             出生年月日
                         </label>
                         <div class="layui-input-inline">
-                            <input type="text" id="js-birthday" name="birthday" lay-verify="" autocomplete="off" class="layui-input" value="${result.birthday}">
+                            <input type="text" id="js-birthday" name="birthday" lay-verify="" autocomplete="off" class="layui-input" value="${result.birthday}" readonly>
                         </div>
                     </div>
                 </div>
@@ -211,9 +211,16 @@
     </div>
 </div>
 <script>
-    layui.use(['form', 'util'], function () {
+    layui.use(['form', 'util', 'laydate'], function () {
         var form = layui.form,
-            util = layui.util;
+            util = layui.util,
+            laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#js-birthday',
+            type: 'date',
+            format: 'yyyy-MM-dd'
+        });
 
         //失去焦点时判断值为空不验证，一旦填写必须验证
         $('input[name="email"]').blur(function () {

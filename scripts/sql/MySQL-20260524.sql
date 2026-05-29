@@ -162,9 +162,6 @@ CREATE TABLE IF NOT EXISTS `sp_flow_category` (
 -- =============================================
 ALTER TABLE `sp_flow` MODIFY COLUMN `process` text COMMENT '流程绘制JSON';
 
--- =============================================
--- 流程表单表
--- =============================================
 CREATE TABLE IF NOT EXISTS `sp_flow_form` (
   `id` varchar(64) NOT NULL COMMENT '主键id',
   `flow_id` varchar(64) NOT NULL COMMENT '流程ID',
