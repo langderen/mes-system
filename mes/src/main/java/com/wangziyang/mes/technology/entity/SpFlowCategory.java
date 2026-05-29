@@ -1,5 +1,6 @@
 package com.wangziyang.mes.technology.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.wangziyang.mes.common.BaseEntity;
 
@@ -13,6 +14,7 @@ public class SpFlowCategory extends BaseEntity {
     private String categoryDesc;
     private Integer sortNum;
     private String state;
+    @TableField(value = "is_deleted")
     private String deleted;
 
     public String getCategoryCode() {
