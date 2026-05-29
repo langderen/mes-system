@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label sp-required">产品编码</label>
+                        <label class="layui-form-label sp-required">产品编号</label>
                         <div class="layui-input-inline" style="width: 320px;">
                             <button type="button" id="js-search-part-btn" class="layui-btn" style="height:38px; margin-right:8px;">
                                 <i class="layui-icon layui-icon-search"></i>
@@ -96,10 +96,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-col-xs12" style="text-align:center;margin-top:20px;">
-                    <button class="layui-btn" lay-submit lay-filter="js-submit-filter">保存</button>
-                    <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll();">取消</button>
-                </div>
+
             </div>
         </form>
     </div>
@@ -130,16 +127,9 @@
         });
 
         form.on('submit(js-submit-filter)', function (data) {
-            spUtil.ajax({
-                url: '${request.contextPath}/order/release/add-or-update',
-                type: 'POST',
-                data: data.field,
-                success: function (result) {
-                    if (result.code === 0) {
-                        window.spChildFrameResult = result;
-                        parent.layer.closeAll();
-                    }
-                }
+            spUtil.submitForm({
+                url: "${request.contextPath}/order/release/add-or-update",
+                data: data.field
             });
             return false;
         });
