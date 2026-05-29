@@ -57,9 +57,9 @@
                         <label class="layui-form-label">订单类型</label>
                         <div class="layui-input-inline">
                             <select name="orderType">
-                                <option value="P" ${(result.orderType!'P'=='P')?string('selected','')}>量产</option>
-                                <option value="A" ${(result.orderType!''=='A')?string('selected','')}>验证</option>
-                                <option value="F" ${(result.orderType!''=='F')?string('selected','')}>返工</option>
+                                <option value="P" <#if (result.orderType!'P') == 'P'>selected</#if>>量产</option>
+                                <option value="A" <#if (result.orderType!'') == 'A'>selected</#if>>验证</option>
+                                <option value="F" <#if (result.orderType!'') == 'F'>selected</#if>>返工</option>
                             </select>
                         </div>
                     </div>

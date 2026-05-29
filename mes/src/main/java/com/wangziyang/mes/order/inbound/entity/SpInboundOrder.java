@@ -19,6 +19,7 @@ public class SpInboundOrder extends BaseEntity {
     private String remark;
     private String warehouseId;
     private String warehouseLocationId;
+    @com.baomidou.mybatisplus.annotation.TableField(exist = false)
     private String warehouseLocationIds;
 
     @TableField(value = "is_deleted")

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Inbound Planning Confirmation</title>
+    <title>计划入库管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -14,29 +14,29 @@
         <form class="layui-form" lay-filter="js-search-form">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">Inbound No</label>
+                    <label class="layui-form-label">入库单号</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="inboundNo" class="layui-input" placeholder="Enter inbound number">
+                        <input type="text" name="inboundNo" class="layui-input" placeholder="请输入入库单号">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">MRP No</label>
+                    <label class="layui-form-label">来源MRP</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="sourceMrpNos" class="layui-input" placeholder="Enter source MRP no">
+                        <input type="text" name="sourceMrpNos" class="layui-input" placeholder="请输入来源MRP编号">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">Status</label>
+                    <label class="layui-form-label">状态</label>
                     <div class="layui-input-inline">
                         <select name="status">
-                            <option value="">All</option>
-                            <option value="draft">Draft</option>
-                            <option value="confirmed">Confirmed</option>
+                            <option value="">全部</option>
+                            <option value="draft">待登账</option>
+                            <option value="confirmed">已登账</option>
                         </select>
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <button class="layui-btn" lay-submit lay-filter="js-search-filter">Search</button>
+                    <button class="layui-btn" lay-submit lay-filter="js-search-filter">查询</button>
                 </div>
             </div>
         </form>
@@ -46,8 +46,8 @@
 </div>
 
 <script type="text/html" id="js-record-table-toolbar-right">
-    <a class="layui-btn layui-btn-xs" lay-event="detail">View</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="confirm">Confirm</a>
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="confirm">登账</a>
 </script>
 
 <script>
@@ -62,21 +62,21 @@
             url: '${request.contextPath}/order/inbound/page',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'inboundNo', title: 'Inbound No', minWidth: 160},
-                {field: 'sourceMrpNos', title: 'MRP No', minWidth: 220},
-                {field: 'itemCount', title: 'Lines', width: 90},
-                {field: 'totalDemandQty', title: 'Total Qty', width: 100},
+                {field: 'inboundNo', title: '入库单号', minWidth: 160},
+                {field: 'sourceMrpNos', title: '来源MRP', minWidth: 220},
+                {field: 'itemCount', title: '明细数', width: 90},
+                {field: 'totalDemandQty', title: '总需求量', width: 100},
                 {
                     field: 'status',
-                    title: 'Status',
+                    title: '状态',
                     width: 100,
                     templet: function (d) {
-                        var map = {'draft': 'Draft', 'confirmed': 'Confirmed'};
+                        var map = {'draft': '待登账', 'confirmed': '已登账'};
                         return map[d.status] || d.status;
                     }
                 },
-                {field: 'createTime', title: 'Create Time', width: 170},
-                {title: 'Actions', toolbar: '#js-record-table-toolbar-right', width: 150}
+                {field: 'createTime', title: '创建时间', width: 170},
+                {title: '操作', toolbar: '#js-record-table-toolbar-right', width: 150}
             ]],
             page: true,
             limit: 20,
@@ -96,7 +96,7 @@
             var data = obj.data;
             if (obj.event === 'detail') {
                 spLayer.open({
-                    title: 'Inbound Detail',
+                    title: '入库单详情',
                     type: 2,
                     area: ['900px', '640px'],
                     spWhere: {id: data.id},
@@ -114,7 +114,7 @@
                 type: 'GET',
                 success: function (result) {
                     var warehouses = (result.code === 0 && result.data) ? result.data : [];
-                    var warehouseOptions = '<option value="">Select warehouse</option>';
+                    var warehouseOptions = '<option value="">请选择库房</option>';
                     for (var i = 0; i < warehouses.length; i++) {
                         warehouseOptions += '<option value="' + warehouses[i].id + '">' + (warehouses[i].name || warehouses[i].code || '') + '</option>';
                     }
@@ -123,7 +123,7 @@
                         + '<div style="padding:20px;">'
                         + '<form class="layui-form" lay-filter="js-inbound-confirm-form">'
                         + '<div class="layui-form-item">'
-                        + '<label class="layui-form-label sp-required">Warehouse</label>'
+                        + '<label class="layui-form-label sp-required">库房</label>'
                         + '<div class="layui-input-inline">'
                         + '<select name="warehouseId" id="js-confirm-warehouse-id" lay-filter="js-confirm-warehouse-filter" lay-verify="required">'
                         + warehouseOptions
@@ -131,13 +131,13 @@
                         + '</div>'
                         + '</div>'
                         + '<div class="layui-form-item">'
-                        + '<label class="layui-form-label">Suggested Locations</label>'
-                        + '<div class="layui-input-block" id="js-location-hint" style="color:#999;">Select a warehouse to load free locations</div>'
+                        + '<label class="layui-form-label">推荐库位</label>'
+                        + '<div class="layui-input-block" id="js-location-hint" style="color:#999;">请选择库房后自动推荐空余库位</div>'
                         + '</div>'
                         + '<div class="layui-form-item">'
-                        + '<label class="layui-form-label sp-required">Locations</label>'
+                        + '<label class="layui-form-label sp-required">库位</label>'
                         + '<div class="layui-input-block" id="js-location-box" style="max-height:180px;overflow:auto;border:1px solid #eee;padding:10px;">'
-                        + '<span style="color:#999;">Select a warehouse</span>'
+                        + '<span style="color:#999;">请选择库房</span>'
                         + '</div>'
                         + '</div>'
                         + '</form>'
@@ -145,7 +145,7 @@
 
                     layer.open({
                         type: 1,
-                        title: 'Inbound Confirm',
+                        title: '入库登账',
                         area: ['740px', '520px'],
                         content: html,
                         success: function () {
@@ -154,7 +154,7 @@
                                 loadLocationCandidates(data.value, row.totalDemandQty);
                             });
                         },
-                        btn: ['Confirm', 'Cancel'],
+                        btn: ['确认登账', '取消'],
                         yes: function (index) {
                             var warehouseId = $('#js-confirm-warehouse-id').val();
                             var selected = [];
@@ -162,11 +162,11 @@
                                 selected.push($(this).val());
                             });
                             if (!warehouseId) {
-                                layer.msg('Please select a warehouse');
+                                layer.msg('请选择库房');
                                 return;
                             }
                             if (!selected.length) {
-                                layer.msg('Please select at least one location');
+                                layer.msg('请选择库位');
                                 return;
                             }
                             spUtil.ajax({
@@ -178,7 +178,7 @@
                                     warehouseLocationId: selected.join(',')
                                 },
                                 success: function (resp) {
-                                    layer.msg(resp.msg || 'Success');
+                                    layer.msg(resp.msg || '操作成功');
                                     if (resp.code === 0) {
                                         tableIns.reload();
                                         layer.close(index);
@@ -199,8 +199,8 @@
                 success: function (result) {
                     var box = $('#js-location-box');
                     if (result.code !== 0 || !result.data) {
-                        box.html('<span style="color:#999;">No available locations</span>');
-                        $('#js-location-hint').text('No available locations found');
+                        box.html('<span style="color:#999;">暂无可用库位</span>');
+                        $('#js-location-hint').text('未找到可用库位');
                         return;
                     }
 
@@ -217,10 +217,10 @@
                             + '</div>';
                     }
                     if (!html) {
-                        html = '<span style="color:#999;">No free locations</span>';
+                        html = '<span style="color:#999;">暂无空余库位</span>';
                     }
                     box.html(html);
-                    $('#js-location-hint').text(result.data.canFulfill ? 'Enough locations available' : 'Not enough free locations, consider splitting posting');
+                    $('#js-location-hint').text(result.data.canFulfill ? '当前库位可满足需求，建议按顺序勾选' : '空余库位不足，建议调整库房或拆分登账');
                 }
             });
         }
