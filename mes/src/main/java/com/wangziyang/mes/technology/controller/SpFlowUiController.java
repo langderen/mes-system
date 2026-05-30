@@ -10,6 +10,6 @@ public class SpFlowUiController {
 
     @GetMapping("/list-ui")
     public String listUI() {
-        return "technology/flow/list";
+        return "technology/flowdefinition/list";
     }
 }

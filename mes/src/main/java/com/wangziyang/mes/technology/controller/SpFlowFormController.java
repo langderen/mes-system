@@ -39,7 +39,7 @@ public class SpFlowFormController extends BaseController {
         } else {
             model.addAttribute("result", record);
         }
-        return "technology/flow/formAddOrUpdate";
+        return "technology/flow/formConfig";
     }
 
     @GetMapping("/list")

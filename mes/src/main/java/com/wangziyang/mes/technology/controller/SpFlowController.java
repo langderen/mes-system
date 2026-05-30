@@ -105,7 +105,21 @@ public class SpFlowController extends BaseController {
             model.addAttribute("result", record);
         }
         model.addAttribute("categories", flowCategoryService.list(new QueryWrapper<SpFlowCategory>().eq("is_deleted", "0").orderByAsc("sort_num")));
-        return "technology/flow/addOrUpdate";
+        return "technology/flow/formAddOrUpdate";
+    }
+
+    @GetMapping("/flowprocess/add-or-update-ui")
+    public String flowprocessAddOrUpdateUI(Model model, SpFlow record) {
+        if (record == null) {
+            record = new SpFlow();
+        }
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(record.getId())) {
+            model.addAttribute("result", iSpFlowService.getById(record.getId()));
+        } else {
+            model.addAttribute("result", record);
+        }
+        model.addAttribute("categories", flowCategoryService.list(new QueryWrapper<SpFlowCategory>().eq("is_deleted", "0").orderByAsc("sort_num")));
+        return "technology/flowprocess/add";
     }
 
     @PostMapping("/add-or-update")

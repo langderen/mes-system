@@ -6,26 +6,48 @@ var spUtil = {};
  * @param param
  */
 spUtil.submitForm = function (options) {
+    var loadingIndex;
+    
     // 默认配置
     var defaultConfig = {
         type: "POST",
-        async: false,
+        async: true,
+        beforeSend: function () {
+            loadingIndex = layer.load(2, {shade: [0.3, '#000']});
+            // 禁用弹窗确定按钮防止重复点击
+            var $btn = parent.$('.layui-layer-btn0');
+            if ($btn.length > 0) {
+                $btn.prop('disabled', true).css({opacity: 0.5, cursor: 'not-allowed'});
+            }
+        },
         success: function (result) {
+            layer.close(loadingIndex);
+            // 恢复弹窗确定按钮
+            var $btn = parent.$('.layui-layer-btn0');
+            if ($btn.length > 0) {
+                $btn.prop('disabled', false).css({opacity: 1, cursor: 'pointer'});
+            }
+            
             // 将打开窗口中的请求结果赋值到父页面window
             window.spChildFrameResult = result;
             if (result.code === 0) {
+                layer.msg('保存成功', {icon: 1});
                 // 获得frame索引
-                // var index = parent.layer.getFrameIndex(window.name);
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.location.reload();
+                parent.layer.close(index);
             } else {
-                layer.alert(result.msg, {
-                    icon: 2
-                });
+                layer.msg(result.msg || '保存失败', {icon: 2});
             }
         },
         error: function (e) {
-            layer.alert('系统错误，请联系管理员', {
-                icon: 2
-            });
+            layer.close(loadingIndex);
+            // 恢复弹窗确定按钮
+            var $btn = parent.$('.layui-layer-btn0');
+            if ($btn.length > 0) {
+                $btn.prop('disabled', false).css({opacity: 1, cursor: 'pointer'});
+            }
+            layer.msg('系统错误，请联系管理员', {icon: 2});
         }
     };
 

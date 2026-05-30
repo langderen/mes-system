@@ -15,19 +15,19 @@
         <div class="layui-form-item">
             <label class="layui-form-label">流程编码</label>
             <div class="layui-input-inline">
-                <input type="text" name="flow" class="layui-input" value="${result.flow!}">
+                <input type="text" name="flow" lay-verify="required" lay-reqtext="请输入流程编码" class="layui-input" value="${result.flow!}" placeholder="请输入流程编码">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">流程名称</label>
             <div class="layui-input-inline">
-                <input type="text" name="flowDesc" class="layui-input" value="${result.flowDesc!}">
+                <input type="text" name="flowDesc" lay-verify="required" lay-reqtext="请输入流程名称" class="layui-input" value="${result.flowDesc!}" placeholder="请输入流程名称">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">流程分类</label>
             <div class="layui-input-inline">
-                <select name="flowCategoryId">
+                <select name="flowCategoryId" lay-verify="required" lay-reqtext="请选择流程分类">
                     <option value="">请选择</option>
                     <#list categories as item>
                         <option value="${item.id}" <#if (result.flowCategoryId!'') == item.id>selected</#if>>${item.categoryName!}</option>
@@ -62,10 +62,8 @@
                 <input type="text" name="state" class="layui-input" value="${result.state!'0'}">
             </div>
         </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="js-submit-filter">确定</button>
-            </div>
+        <div class="layui-form-item" style="display:none;">
+            <button id="js-submit" class="layui-btn" lay-submit lay-filter="js-submit-filter">确定</button>
         </div>
     </form>
 </div>
@@ -74,15 +72,12 @@
 layui.use(['form', 'layer'], function () {
     var form = layui.form, layer = layui.layer;
     form.render();
+
+    //监听提交
     form.on('submit(js-submit-filter)', function (data) {
-        $.post('${request.contextPath}/basedata/flow/add-or-update', data.field, function (result) {
-            if (result.code === 0) {
-                var index = parent.layer.getFrameIndex(window.name);
-                parent.location.reload();
-                parent.layer.close(index);
-            } else {
-                layer.msg(result.msg || '保存失败');
-            }
+        spUtil.submitForm({
+            url: "${request.contextPath}/basedata/flow/add-or-update",
+            data: data.field
         });
         return false;
     });

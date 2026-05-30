@@ -118,7 +118,7 @@ layui.use(['form', 'table', 'spLayer', 'spTable', 'layer'], function () {
         }
         if (obj.event === 'form') {
             spLayer.open({
-                title: '流程表单 - ' + (data.flowDesc || data.flow),
+                title: '流程表单配置 - ' + (data.flowDesc || data.flow),
                 area: ['960px', '90%'],
                 content: '${request.contextPath}/basedata/flow/form/add-or-update-ui?flowId=' + data.id
             });
