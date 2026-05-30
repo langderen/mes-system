@@ -89,25 +89,6 @@ public class SpFlowController extends BaseController {
         return Result.success(list);
     }
 
-    @GetMapping("/list-ui")
-    public String listUI(Model model) {
-        return "technology/flow/list";
-    }
-
-    @GetMapping("/add-or-update-ui")
-    public String addOrUpdateUI(Model model, SpFlow record) {
-        if (record == null) {
-            record = new SpFlow();
-        }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(record.getId())) {
-            model.addAttribute("result", iSpFlowService.getById(record.getId()));
-        } else {
-            model.addAttribute("result", record);
-        }
-        model.addAttribute("categories", flowCategoryService.list(new QueryWrapper<SpFlowCategory>().eq("is_deleted", "0").orderByAsc("sort_num")));
-        return "technology/flow/formAddOrUpdate";
-    }
-
     @GetMapping("/flowprocess/add-or-update-ui")
     public String flowprocessAddOrUpdateUI(Model model, SpFlow record) {
         if (record == null) {
