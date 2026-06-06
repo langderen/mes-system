@@ -152,18 +152,9 @@
         form.on('submit(js-submit-filter)', function(data){
             var field = data.field;
             field.isCritical = field.isCritical ? '1' : '0';
-            spUtil.ajax({
+            spUtil.submitForm({
                 url: '${request.contextPath}/quality/def/save',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(field),
-                showLoading: true,
-                success: function(){
-                    var frameIndex = parent.layer.getFrameIndex(window.name);
-                    parent.layer.msg('保存成功', {icon: 1, time: 800}, function(){
-                        parent.layer.close(frameIndex);
-                    });
-                }
+                data: field
             });
             return false;
         });

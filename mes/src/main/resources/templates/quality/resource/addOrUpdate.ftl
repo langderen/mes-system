@@ -108,18 +108,9 @@
         laydate.render({elem: '#js-last-cal'});
         laydate.render({elem: '#js-next-cal'});
         form.on('submit(js-submit-filter)', function(data){
-            spUtil.ajax({
+            spUtil.submitForm({
                 url: '${request.contextPath}/quality/resource/save',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data.field),
-                showLoading: true,
-                success: function(){
-                    var frameIndex = parent.layer.getFrameIndex(window.name);
-                    parent.layer.msg('保存成功', {icon: 1, time: 800}, function(){
-                        parent.layer.close(frameIndex);
-                    });
-                }
+                data: data.field
             });
             return false;
         });
