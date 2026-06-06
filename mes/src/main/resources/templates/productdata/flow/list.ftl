@@ -168,8 +168,31 @@
             }
             if (currentBomData.state === 'locked') {
                 banner.addClass('locked').show();
-                btnArea.html('<button class="layui-btn layui-btn-sm btn-unlock" id="js-unlock-btn"><i class="layui-icon">&#xe642;</i> 解锁</button>');
+                btnArea.html(
+                    '<button class="layui-btn layui-btn-sm layui-btn-normal" id="js-content-btn"><i class="layui-icon">&#xe642;</i> 开始编制</button>&nbsp;' +
+                    '<button class="layui-btn layui-btn-sm btn-unlock" id="js-unlock-btn"><i class="layui-icon">&#xe642;</i> 解锁</button>'
+                );
                 $('#js-unlock-btn').on('click', unlockBom);
+                $('#js-content-btn').on('click', function() {
+                    // 跳转到第一个有工序的BOM子项进行内容编制
+                    var firstItemWithOper = null;
+                    for (var i = 0; i < currentRawItems.length; i++) {
+                        if (currentRawItems[i].opers && currentRawItems[i].opers.length > 0) {
+                            firstItemWithOper = currentRawItems[i];
+                            break;
+                        }
+                    }
+                    if (firstItemWithOper) {
+                        var url = '${request.contextPath}/productdata/content/list-ui' +
+                            '?bomId=' + encodeURIComponent(currentBomId) +
+                            '&bomItemId=' + encodeURIComponent(firstItemWithOper.id) +
+                            '&bomName=' + encodeURIComponent(currentBomData.bomName || '') +
+                            '&partName=' + encodeURIComponent(firstItemWithOper.partName || '');
+                        window.location.href = url;
+                    } else {
+                        layer.msg('该BOM没有关联工序，请先规划工艺', { icon: 2 });
+                    }
+                });
             } else {
                 banner.removeClass('locked').hide();
                 btnArea.html('<button class="layui-btn layui-btn-sm btn-lock" id="js-lock-btn"><i class="layui-icon">&#xe641;</i> 锁定BOM</button>');
