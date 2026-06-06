@@ -32,9 +32,9 @@
                         <div class="layui-input-inline">
                             <select name="inspectionType" lay-verify="required">
                                 <option value="">请选择</option>
-                                <option value="iqc" ${(result.inspectionType!''=='iqc')?string('selected','')}>来料检验(IQC)</option>
-                                <option value="ipqc" ${(result.inspectionType!''=='ipqc')?string('selected','')}>过程检验(IPQC)</option>
-                                <option value="oqc" ${(result.inspectionType!''=='oqc')?string('selected','')}>出货检验(OQC)</option>
+                                <option value="iqc" ${((result.inspectionType!'') == 'iqc')?string('selected','')}>来料检验(IQC)</option>
+                                <option value="ipqc" ${((result.inspectionType!'') == 'ipqc')?string('selected','')}>过程检验(IPQC)</option>
+                                <option value="oqc" ${((result.inspectionType!'') == 'oqc')?string('selected','')}>出货检验(OQC)</option>
                             </select>
                         </div>
                     </div>
@@ -54,10 +54,10 @@
                         <label class="layui-form-label">检验方法</label>
                         <div class="layui-input-inline">
                             <select name="inspectionMethod">
-                                <option value="visual" ${(result.inspectionMethod!'visual'=='visual')?string('selected','')}>目视</option>
-                                <option value="measure" ${(result.inspectionMethod!''=='measure')?string('selected','')}>测量</option>
-                                <option value="test" ${(result.inspectionMethod!''=='test')?string('selected','')}>试验</option>
-                                <option value="sample" ${(result.inspectionMethod!''=='sample')?string('selected','')}>抽样</option>
+                                <option value="visual" ${((result.inspectionMethod!'') == 'visual')?string('selected','')}>目视</option>
+                                <option value="measure" ${((result.inspectionMethod!'') == 'measure')?string('selected','')}>测量</option>
+                                <option value="test" ${((result.inspectionMethod!'') == 'test')?string('selected','')}>试验</option>
+                                <option value="sample" ${((result.inspectionMethod!'') == 'sample')?string('selected','')}>抽样</option>
                             </select>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">关键检验项</label>
                         <div class="layui-input-inline">
-                            <input type="checkbox" name="isCritical" value="1" lay-skin="switch" lay-text="是|否" ${(result.isCritical!'0'=='1')?string('checked','')}>
+                            <input type="checkbox" name="isCritical" value="1" lay-skin="switch" lay-text="是|否" ${((result.isCritical!'') == '1')?string('checked','')}>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -127,8 +127,8 @@
                         <label class="layui-form-label">状态</label>
                         <div class="layui-input-inline">
                             <select name="status">
-                                <option value="active" ${(result.status!'active'=='active')?string('selected','')}>启用</option>
-                                <option value="inactive" ${(result.status!''=='inactive')?string('selected','')}>停用</option>
+                                <option value="active" ${((result.status!'') == 'active')?string('selected','')}>启用</option>
+                                <option value="inactive" ${((result.status!'') == 'inactive')?string('selected','')}>停用</option>
                             </select>
                         </div>
                     </div>
@@ -141,10 +141,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-col-xs12" style="text-align:center;margin-top:20px;">
-                    <button class="layui-btn" lay-submit lay-filter="js-submit-filter">保存</button>
-                    <button type="button" class="layui-btn layui-btn-primary" onclick="spLayer.closeAll();">取消</button>
-                </div>
+                <button id="js-submit" class="layui-btn" lay-submit lay-filter="js-submit-filter" style="display:none;">保存</button>
             </div>
         </form>
     </div>
@@ -157,9 +154,16 @@
             field.isCritical = field.isCritical ? '1' : '0';
             spUtil.ajax({
                 url: '${request.contextPath}/quality/def/save',
-                type: 'POST', contentType: 'application/json',
+                type: 'POST',
+                contentType: 'application/json',
                 data: JSON.stringify(field),
-                success: function(){ spLayer.closeAll(); }
+                showLoading: true,
+                success: function(){
+                    var frameIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.msg('保存成功', {icon: 1, time: 800}, function(){
+                        parent.layer.close(frameIndex);
+                    });
+                }
             });
             return false;
         });

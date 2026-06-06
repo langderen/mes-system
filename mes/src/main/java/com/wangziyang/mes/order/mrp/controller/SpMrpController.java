@@ -50,7 +50,22 @@ public class SpMrpController extends BaseController {
 
     @GetMapping("/detail-ui")
     public String detailUI(Model model, String id) {
-        model.addAttribute("result", mrpRecordService.getById(id));
+        if (StringUtils.isBlank(id)) {
+            model.addAttribute("errorMsg", "参数错误：MRP记录ID不能为空");
+            model.addAttribute("result", null);
+        } else {
+            // 清理ID中可能混入的特殊字符
+            String cleanId = id.replaceAll("[^0-9a-zA-Z]", "");
+            if (!cleanId.equals(id)) {
+                // 记录原始ID和清理后的ID，方便排查
+                System.out.println("MRP详情 - 原始ID: " + id + ", 清理后ID: " + cleanId);
+            }
+            SpMrpRecord record = mrpRecordService.getById(cleanId);
+            if (record == null) {
+                model.addAttribute("errorMsg", "未找到ID为 " + cleanId + " 的MRP记录");
+            }
+            model.addAttribute("result", record);
+        }
         return "order/mrp/detail";
     }
 }

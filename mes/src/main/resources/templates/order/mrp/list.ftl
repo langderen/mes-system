@@ -144,6 +144,12 @@
 
         table.on('tool(js-record-table-filter)', function (obj) {
             if (obj.event === 'detail') {
+                console.log('MRP详情 - 数据:', obj.data);
+                console.log('MRP详情 - ID:', obj.data.id);
+                if (!obj.data.id) {
+                    layer.msg('数据异常：MRP记录ID为空');
+                    return;
+                }
                 spLayer.open({
                     title: 'MRP详情',
                     type: 2,

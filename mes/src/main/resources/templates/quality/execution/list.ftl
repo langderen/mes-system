@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>质检执行管理</title>
+    <title>我的质检任务</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -14,27 +14,20 @@
         <form id="js-search-form" class="layui-form" lay-filter="js-q-form-filter">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">记录编码</label>
+                    <label class="layui-form-label">任务编码</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="recordCode" autocomplete="off" class="layui-input">
+                        <input type="text" name="taskCode" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">检验结果</label>
+                    <label class="layui-form-label">状态</label>
                     <div class="layui-input-inline">
-                        <select name="result">
+                        <select name="status">
                             <option value="">全部</option>
-                            <option value="pass">合格</option>
-                            <option value="fail">不合格</option>
-                            <option value="rework">返工</option>
-                            <option value="scrap">报废</option>
+                            <option value="assigned">已分配</option>
+                            <option value="started">已开始</option>
+                            <option value="completed">已完成</option>
                         </select>
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">检验日期</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="inspectionTime" id="js-inspection-time" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -46,39 +39,27 @@
     </div>
 </div>
 <script type="text/html" id="js-record-table-toolbar-right">
-    <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i class="layui-icon layui-icon-delete"></i>删除</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="execute">执行检查</a>
 </script>
 <script>
-    layui.use(['form', 'table', 'spLayer', 'spTable', 'laydate'], function () {
-        var form = layui.form, table = layui.table, spLayer = layui.spLayer, spTable = layui.spTable, laydate = layui.laydate;
-        laydate.render({elem: '#js-inspection-time'});
-
+    layui.use(['form', 'table', 'spLayer', 'spTable'], function () {
+        var form = layui.form, table = layui.table, spLayer = layui.spLayer, spTable = layui.spTable;
         var tableIns = spTable.render({
-            url: '${request.contextPath}/quality/execution/page',
+            url: '${request.contextPath}/quality/task/page',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'recordCode', title: '记录编码', width: 160},
-                {field: 'defName', title: '质检定义', width: 140},
-                {field: 'inspectorName', title: '检验员', width: 100},
-                {field: 'inspectionTime', title: '检验时间', width: 160},
-                {field: 'result', title: '检验结果', width: 100, templet: function(d){
-                    var m = {pass:'<span class="layui-badge layui-bg-green">合格</span>',
-                             fail:'<span class="layui-badge layui-bg-red">不合格</span>',
-                             rework:'<span class="layui-badge layui-bg-orange">返工</span>',
-                             scrap:'<span class="layui-badge layui-bg-black">报废</span>'};
-                    return m[d.result]||d.result;
+                {field: 'taskCode', title: '任务编码', width: 160},
+                {field: 'planId', title: '调度计划ID', width: 180},
+                {field: 'assignedQty', title: '分配数量', width: 100},
+                {field: 'completedQty', title: '已完成', width: 90},
+                {field: 'passQty', title: '合格数', width: 90},
+                {field: 'failQty', title: '不合格数', width: 90},
+                {field: 'status', title: '状态', width: 100, templet: function(d){
+                    var m = {assigned:'已分配', started:'已开始', completed:'已完成'};
+                    return m[d.status] || d.status;
                 }},
-                {field: 'defectType', title: '缺陷类型', width: 100},
-                {field: 'defectSeverity', title: '缺陷等级', width: 100, templet: function(d){
-                    var m = {critical:'致命',major:'严重',minor:'轻微'};
-                    return m[d.defectSeverity]||d.defectSeverity||'-';
-                }},
-                {field: 'defectQty', title: '缺陷数量', width: 90},
-                {field: 'handleMethod', title: '处理方式', width: 100, templet: function(d){
-                    var m = {rework:'返工',scrap:'报废',concession:'让步接收',return:'退货'};
-                    return m[d.handleMethod]||d.handleMethod||'-';
-                }},
+                {field: 'assignTime', title: '分配时间', width: 160},
+                {field: 'endTime', title: '完成时间', width: 160},
                 {title: '操作', toolbar: '#js-record-table-toolbar-right', width: 150, fixed: 'right'}
             ]]
         });
@@ -88,19 +69,17 @@
         });
         table.on('tool(js-record-table-filter)', function(obj){
             var data = obj.data;
-            if (obj.event === 'detail') {
+            if (obj.event === 'execute') {
+                if (data.status === 'completed') {
+                    spLayer.msg('该任务已完成');
+                    return;
+                }
                 spLayer.open({
-                    title: '质检数据 - ' + data.recordCode,
-                    area: ['900px', '550px'],
-                    content: '${request.contextPath}/quality/data/list-ui?recordId=' + data.id
-                });
-            } else if (obj.event === 'delete') {
-                spLayer.confirm('确认删除?', function(){
-                    spUtil.ajax({
-                        url: '${request.contextPath}/quality/execution/delete?id=' + data.id,
-                        type: 'POST',
-                        success: function(){ tableIns.reload(); }
-                    });
+                    title: '执行检查 - ' + data.taskCode,
+                    area: ['900px', '600px'],
+                    content: '${request.contextPath}/quality/execution/execute-ui',
+                    spWhere: { taskId: data.id },
+                    end: function(){ tableIns.reload(); }
                 });
             }
         });

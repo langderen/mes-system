@@ -27,10 +27,17 @@ public class SpQcDefController extends BaseController {
 
     @GetMapping("/add-or-update-ui")
     public String addOrUpdateUI(Model model, String id) {
+        model.addAttribute("id", id);
+        SpQcInspectionDef def = new SpQcInspectionDef();
         if (StringUtils.isNotEmpty(id)) {
-            SpQcInspectionDef def = qcInspectionDefService.getById(id);
-            model.addAttribute("result", def);
+            SpQcInspectionDef loaded = qcInspectionDefService.getById(id);
+            if (loaded != null) {
+                def = loaded;
+            } else {
+                def.setId(id);
+            }
         }
+        model.addAttribute("result", def);
         return "quality/def/addOrUpdate";
     }
 

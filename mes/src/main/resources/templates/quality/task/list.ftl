@@ -78,7 +78,8 @@
                 spLayer.open({
                     title: '执行检验 - ' + data.taskCode,
                     area: ['900px', '600px'],
-                    content: '${request.contextPath}/quality/execution/execute-ui?taskId=' + data.id,
+                    content: '${request.contextPath}/quality/execution/execute-ui',
+                    spWhere: { taskId: data.id },
                     end: function(){ tableIns.reload(); }
                 });
             } else if (obj.event === 'delete') {

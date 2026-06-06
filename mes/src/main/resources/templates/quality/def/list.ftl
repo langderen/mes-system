@@ -109,7 +109,8 @@
             if (obj.event === 'edit') {
                 spLayer.open({
                     title: '编辑质检定义', area: ['900px', '600px'],
-                    content: '${request.contextPath}/quality/def/add-or-update-ui?id=' + data.id,
+                    content: '${request.contextPath}/quality/def/add-or-update-ui',
+                    spWhere: { id: data.id },
                     end: function(){ tableIns.reload(); }
                 });
             } else if (obj.event === 'delete') {

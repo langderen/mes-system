@@ -32,11 +32,11 @@
                         <div class="layui-input-inline">
                             <select name="activityType" lay-verify="required">
                                 <option value="">请选择</option>
-                                <option value="iqc" ${(result.activityType!'' == 'iqc')?string('selected','')}>来料检验(IQC)</option>
-                                <option value="ipqc" ${(result.activityType!'' == 'ipqc')?string('selected','')}>过程检验(IPQC)</option>
-                                <option value="oqc" ${(result.activityType!'' == 'oqc')?string('selected','')}>出货检验(OQC)</option>
-                                <option value="spc" ${(result.activityType!'' == 'spc')?string('selected','')}>统计过程控制(SPC)</option>
-                                <option value="msa" ${(result.activityType!'' == 'msa')?string('selected','')}>测量系统分析(MSA)</option>
+                                <option value="iqc" ${((result.activityType!'') == 'iqc')?string('selected','')}>来料检验(IQC)</option>
+                                <option value="ipqc" ${((result.activityType!'') == 'ipqc')?string('selected','')}>过程检验(IPQC)</option>
+                                <option value="oqc" ${((result.activityType!'') == 'oqc')?string('selected','')}>出货检验(OQC)</option>
+                                <option value="spc" ${((result.activityType!'') == 'spc')?string('selected','')}>统计过程控制(SPC)</option>
+                                <option value="msa" ${((result.activityType!'') == 'msa')?string('selected','')}>测量系统分析(MSA)</option>
                             </select>
                         </div>
                     </div>
@@ -44,9 +44,9 @@
                         <label class="layui-form-label">触发方式</label>
                         <div class="layui-input-inline">
                             <select name="triggerType">
-                                <option value="manual" ${(result.triggerType!'manual' == 'manual')?string('selected','')}>手动</option>
-                                <option value="schedule" ${(result.triggerType!'manual' == 'schedule')?string('selected','')}>定时</option>
-                                <option value="event" ${(result.triggerType!'manual' == 'event')?string('selected','')}>事件</option>
+                                <option value="manual" ${((result.triggerType!'manual') == 'manual')?string('selected','')}>手动</option>
+                                <option value="schedule" ${((result.triggerType!'') == 'schedule')?string('selected','')}>定时</option>
+                                <option value="event" ${((result.triggerType!'') == 'event')?string('selected','')}>事件</option>
                             </select>
                         </div>
                     </div>
@@ -74,11 +74,11 @@
                         <label class="layui-form-label">状态</label>
                         <div class="layui-input-inline">
                             <select name="status">
-                                <option value="draft" ${(result.status!'draft' == 'draft')?string('selected','')}>草稿</option>
-                                <option value="active" ${(result.status!'' == 'active')?string('selected','')}>进行中</option>
-                                <option value="paused" ${(result.status!'' == 'paused')?string('selected','')}>暂停</option>
-                                <option value="completed" ${(result.status!'' == 'completed')?string('selected','')}>完成</option>
-                                <option value="cancelled" ${(result.status!'' == 'cancelled')?string('selected','')}>取消</option>
+                                <option value="draft" ${((result.status!'draft') == 'draft')?string('selected','')}>草稿</option>
+                                <option value="active" ${((result.status!'') == 'active')?string('selected','')}>进行中</option>
+                                <option value="paused" ${((result.status!'') == 'paused')?string('selected','')}>暂停</option>
+                                <option value="completed" ${((result.status!'') == 'completed')?string('selected','')}>完成</option>
+                                <option value="cancelled" ${((result.status!'') == 'cancelled')?string('selected','')}>取消</option>
                             </select>
                         </div>
                     </div>
@@ -86,9 +86,9 @@
                         <label class="layui-form-label">优先级</label>
                         <div class="layui-input-inline">
                             <select name="priority">
-                                <option value="1" ${(result.priority!2 == 1)?string('selected','')}>高</option>
-                                <option value="2" ${(result.priority!2 == 2)?string('selected','')}>中</option>
-                                <option value="3" ${(result.priority!2 == 3)?string('selected','')}>低</option>
+                                <option value="1" ${((result.priority!2) == 1)?string('selected','')}>高</option>
+                                <option value="2" ${((result.priority!2) == 2)?string('selected','')}>中</option>
+                                <option value="3" ${((result.priority!2) == 3)?string('selected','')}>低</option>
                             </select>
                         </div>
                     </div>
@@ -113,10 +113,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-col-xs12" style="text-align:center;margin-top:20px;">
-                    <button class="layui-btn" lay-submit lay-filter="js-submit-filter">保存</button>
-                    <button type="button" class="layui-btn layui-btn-primary" onclick="spLayer.closeAll();">取消</button>
-                </div>
+                <button id="js-submit" class="layui-btn" lay-submit lay-filter="js-submit-filter" style="display:none;">保存</button>
             </div>
         </form>
     </div>
@@ -133,8 +130,12 @@
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data.field),
+                showLoading: true,
                 success: function(){
-                    spLayer.closeAll();
+                    var frameIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.msg('保存成功', {icon: 1, time: 800}, function(){
+                        parent.layer.close(frameIndex);
+                    });
                 }
             });
             return false;

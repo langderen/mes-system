@@ -32,10 +32,10 @@
                         <div class="layui-input-inline">
                             <select name="resourceType" lay-verify="required">
                                 <option value="">请选择</option>
-                                <option value="equipment" ${(result.resourceType!'' == 'equipment')?string('selected','')}>设备</option>
-                                <option value="tool" ${(result.resourceType!'' == 'tool')?string('selected','')}>工具</option>
-                                <option value="gauge" ${(result.resourceType!'' == 'gauge')?string('selected','')}>量具</option>
-                                <option value="fixture" ${(result.resourceType!'' == 'fixture')?string('selected','')}>夹具</option>
+                                <option value="equipment" ${((result.resourceType!'') == 'equipment')?string('selected','')}>设备</option>
+                                <option value="tool" ${((result.resourceType!'') == 'tool')?string('selected','')}>工具</option>
+                                <option value="gauge" ${((result.resourceType!'') == 'gauge')?string('selected','')}>量具</option>
+                                <option value="fixture" ${((result.resourceType!'') == 'fixture')?string('selected','')}>夹具</option>
                             </select>
                         </div>
                     </div>
@@ -81,10 +81,10 @@
                         <label class="layui-form-label">状态</label>
                         <div class="layui-input-inline">
                             <select name="status">
-                                <option value="active" ${(result.status!'active' == 'active')?string('selected','')}>正常</option>
-                                <option value="inactive" ${(result.status!'' == 'inactive')?string('selected','')}>停用</option>
-                                <option value="scrapped" ${(result.status!'' == 'scrapped')?string('selected','')}>报废</option>
-                                <option value="maintenance" ${(result.status!'' == 'maintenance')?string('selected','')}>维修中</option>
+                                <option value="active" ${((result.status!'active') == 'active')?string('selected','')}>正常</option>
+                                <option value="inactive" ${((result.status!'') == 'inactive')?string('selected','')}>停用</option>
+                                <option value="scrapped" ${((result.status!'') == 'scrapped')?string('selected','')}>报废</option>
+                                <option value="maintenance" ${((result.status!'') == 'maintenance')?string('selected','')}>维修中</option>
                             </select>
                         </div>
                     </div>
@@ -97,10 +97,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-col-xs12" style="text-align:center;margin-top:20px;">
-                    <button class="layui-btn" lay-submit lay-filter="js-submit-filter">保存</button>
-                    <button type="button" class="layui-btn layui-btn-primary" onclick="spLayer.closeAll();">取消</button>
-                </div>
+                <button id="js-submit" class="layui-btn" lay-submit lay-filter="js-submit-filter" style="display:none;">保存</button>
             </div>
         </form>
     </div>
@@ -113,9 +110,16 @@
         form.on('submit(js-submit-filter)', function(data){
             spUtil.ajax({
                 url: '${request.contextPath}/quality/resource/save',
-                type: 'POST', contentType: 'application/json',
+                type: 'POST',
+                contentType: 'application/json',
                 data: JSON.stringify(data.field),
-                success: function(){ spLayer.closeAll(); }
+                showLoading: true,
+                success: function(){
+                    var frameIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.msg('保存成功', {icon: 1, time: 800}, function(){
+                        parent.layer.close(frameIndex);
+                    });
+                }
             });
             return false;
         });

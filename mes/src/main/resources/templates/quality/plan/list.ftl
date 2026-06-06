@@ -46,7 +46,6 @@
 </script>
 <script type="text/html" id="js-record-table-toolbar-right">
     <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="execute">执行</a>
     <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="assign">分配</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i class="layui-icon layui-icon-delete"></i>删除</a>
 </script>
@@ -95,7 +94,8 @@
             if (obj.event === 'edit') {
                 spLayer.open({
                     title: '编辑调度计划', area: ['900px', '600px'],
-                    content: '${request.contextPath}/quality/plan/add-or-update-ui?id=' + data.id,
+                    content: '${request.contextPath}/quality/plan/add-or-update-ui',
+                    spWhere: { id: data.id },
                     end: function(){ tableIns.reload(); }
                 });
             } else if (obj.event === 'execute') {
@@ -110,7 +110,8 @@
                 spLayer.open({
                     title: '质检分配 - ' + data.planCode,
                     area: ['900px', '600px'],
-                    content: '${request.contextPath}/quality/task/assign-ui?planId=' + data.id,
+                    content: '${request.contextPath}/quality/task/assign-ui',
+                    spWhere: { planId: data.id },
                     end: function(){ tableIns.reload(); }
                 });
             } else if (obj.event === 'delete') {

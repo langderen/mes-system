@@ -26,11 +26,18 @@ public class SpQcActivityController extends BaseController {
     }
 
     @GetMapping("/add-or-update-ui")
-    public String addOrUpdateUI(Model model, String id) {
+    public String addOrUpdateUI(Model model, @RequestParam(required = false) String id) {
+        model.addAttribute("id", id);
+        SpQcActivity activity = new SpQcActivity();
         if (StringUtils.isNotEmpty(id)) {
-            SpQcActivity activity = qcActivityService.getById(id);
-            model.addAttribute("result", activity);
+            SpQcActivity loaded = qcActivityService.getById(id);
+            if (loaded != null) {
+                activity = loaded;
+            } else {
+                activity.setId(id);
+            }
         }
+        model.addAttribute("result", activity);
         return "quality/activity/addOrUpdate";
     }
 

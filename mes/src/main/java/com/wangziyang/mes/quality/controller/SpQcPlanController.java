@@ -5,8 +5,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wangziyang.mes.common.BaseController;
 import com.wangziyang.mes.common.Result;
-import com.wangziyang.mes.quality.entity.*;
-import com.wangziyang.mes.quality.service.*;
+import com.wangziyang.mes.quality.entity.SpQcActivity;
+import com.wangziyang.mes.quality.entity.SpQcInspectionDef;
+import com.wangziyang.mes.quality.entity.SpQcInspectionPlan;
+import com.wangziyang.mes.quality.service.ISpQcActivityService;
+import com.wangziyang.mes.quality.service.ISpQcInspectionDefService;
+import com.wangziyang.mes.quality.service.ISpQcInspectionPlanService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,8 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/quality/plan")
@@ -37,10 +39,11 @@ public class SpQcPlanController extends BaseController {
 
     @GetMapping("/add-or-update-ui")
     public String addOrUpdateUI(Model model, String id) {
+        SpQcInspectionPlan plan = new SpQcInspectionPlan();
         if (StringUtils.isNotEmpty(id)) {
-            SpQcInspectionPlan plan = qcInspectionPlanService.getById(id);
-            model.addAttribute("result", plan);
+            plan = qcInspectionPlanService.getById(id);
         }
+        model.addAttribute("result", plan);
         return "quality/plan/addOrUpdate";
     }
 

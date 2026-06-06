@@ -59,6 +59,10 @@ public class SpQcExecutionController extends BaseController {
     @PostMapping("/page")
     @ResponseBody
     public Result page(Integer current, Integer size, String recordCode, String taskId, String inspectorId, String result, String inspectionTime) {
+        SysUser currentUser = getSysUser();
+        if (StringUtils.isBlank(inspectorId) && currentUser != null && StringUtils.isNotBlank(currentUser.getId())) {
+            inspectorId = currentUser.getId();
+        }
         QueryWrapper<SpQcInspectionRecord> wrapper = new QueryWrapper<SpQcInspectionRecord>()
                 .eq("is_deleted", "0")
                 .like(StringUtils.isNotBlank(recordCode), "record_code", recordCode)

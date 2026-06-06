@@ -27,10 +27,16 @@ public class SpQcResourceController extends BaseController {
 
     @GetMapping("/add-or-update-ui")
     public String addOrUpdateUI(Model model, String id) {
+        model.addAttribute("id", id);
+        SpQcResource resource = new SpQcResource();
         if (StringUtils.isNotEmpty(id)) {
-            SpQcResource resource = qcResourceService.getById(id);
-            model.addAttribute("result", resource);
+            resource = qcResourceService.getById(id);
+            if (resource == null) {
+                resource = new SpQcResource();
+                resource.setId(id);
+            }
         }
+        model.addAttribute("result", resource);
         return "quality/resource/addOrUpdate";
     }
 

@@ -130,7 +130,8 @@
                 spLayer.open({
                     title: '编辑质量活动',
                     area: ['800px', '550px'],
-                    content: '${request.contextPath}/quality/activity/add-or-update-ui?id=' + data.id,
+                    content: '${request.contextPath}/quality/activity/add-or-update-ui',
+                    spWhere: { id: data.id },
                     end: function(){ tableIns.reload(); }
                 });
             } else if (obj.event === 'delete') {

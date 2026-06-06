@@ -67,10 +67,10 @@
                         <label class="layui-form-label">状态</label>
                         <div class="layui-input-inline">
                             <select name="status">
-                                <option value="pending" ${(result.status!'pending'=='pending')?string('selected','')}>待执行</option>
-                                <option value="executing" ${(result.status!''=='executing')?string('selected','')}>执行中</option>
-                                <option value="completed" ${(result.status!''=='completed')?string('selected','')}>已完成</option>
-                                <option value="closed" ${(result.status!''=='closed')?string('selected','')}>已关闭</option>
+                                <option value="pending" ${((result.status!'pending') == 'pending')?string('selected','')}>待执行</option>
+                                <option value="executing" ${((result.status!'') == 'executing')?string('selected','')}>执行中</option>
+                                <option value="completed" ${((result.status!'') == 'completed')?string('selected','')}>已完成</option>
+                                <option value="closed" ${((result.status!'') == 'closed')?string('selected','')}>已关闭</option>
                             </select>
                         </div>
                     </div>
@@ -78,9 +78,9 @@
                         <label class="layui-form-label">优先级</label>
                         <div class="layui-input-inline">
                             <select name="priority">
-                                <option value="1" ${(result.priority!2==1)?string('selected','')}>高</option>
-                                <option value="2" ${(result.priority!2==2)?string('selected','')}>中</option>
-                                <option value="3" ${(result.priority!2==3)?string('selected','')}>低</option>
+                                <option value="1" ${((result.priority!2) == 1)?string('selected','')}>高</option>
+                                <option value="2" ${((result.priority!2) == 2)?string('selected','')}>中</option>
+                                <option value="3" ${((result.priority!2) == 3)?string('selected','')}>低</option>
                             </select>
                         </div>
                     </div>
@@ -105,10 +105,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-col-xs12" style="text-align:center;margin-top:20px;">
-                    <button class="layui-btn" lay-submit lay-filter="js-submit-filter">保存</button>
-                    <button type="button" class="layui-btn layui-btn-primary" onclick="spLayer.closeAll();">取消</button>
-                </div>
+                <button id="js-submit" class="layui-btn" lay-submit lay-filter="js-submit-filter" style="display:none;">保存</button>
             </div>
         </form>
     </div>
@@ -145,9 +142,16 @@
         form.on('submit(js-submit-filter)', function(data){
             spUtil.ajax({
                 url: '${request.contextPath}/quality/plan/save',
-                type: 'POST', contentType: 'application/json',
+                type: 'POST',
+                contentType: 'application/json',
                 data: JSON.stringify(data.field),
-                success: function(){ spLayer.closeAll(); }
+                showLoading: true,
+                success: function(){
+                    var frameIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.msg('保存成功', {icon: 1, time: 800}, function(){
+                        parent.layer.close(frameIndex);
+                    });
+                }
             });
             return false;
         });
