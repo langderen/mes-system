@@ -38,6 +38,18 @@ public class Result<T> extends HashMap<String, Object> {
         return restResult(data, 1, msg);
     }
 
+    public static <T> Result<T> error() {
+        return restResult(null, 1, "操作失败");
+    }
+
+    public static <T> Result<T> error(String msg) {
+        return restResult(null, 1, msg);
+    }
+
+    public static <T> Result<T> error(int code, String msg) {
+        return restResult(null, code, msg);
+    }
+
     private static <T> Result<T> restResult(T data, int code, String msg) {
         Result<T> apiResult = new Result<>();
         apiResult.put("code", code);
@@ -46,4 +58,28 @@ public class Result<T> extends HashMap<String, Object> {
         return apiResult;
     }
 
+    public Integer getCode() {
+        return (Integer) get("code");
+    }
+
+    public void setCode(int code) {
+        put("code", code);
+    }
+
+    public String getMsg() {
+        return (String) get("msg");
+    }
+
+    public void setMsg(String msg) {
+        put("msg", msg);
+    }
+
+    @SuppressWarnings("unchecked")
+    public T getData() {
+        return (T) get("data");
+    }
+
+    public void setData(T data) {
+        put("data", data);
+    }
 }

@@ -106,7 +106,7 @@ public class SpFlowController extends BaseController {
                         operMap.put("operName", oname);
                         opers.add(operMap);
                         if (processText.length() > 0) {
-                            processText.append(" → ");
+                            processText.append(" -> ");
                         }
                         processText.append(oname);
                     }
@@ -132,7 +132,7 @@ public class SpFlowController extends BaseController {
     @ResponseBody
     public Result saveBindings(String bomId, String bomItemId, String operIds) {
         if (StringUtils.isBlank(bomItemId)) {
-            return Result.failure("参数不能为空");
+            return Result.failure("parameters are required");
         }
 
         SpProductBomItem bomItem = bomItemService.getOne(
@@ -140,7 +140,7 @@ public class SpFlowController extends BaseController {
                         .eq("id", bomItemId)
                         .eq("is_deleted", "0"));
         if (bomItem == null) {
-            return Result.failure("BOM子项不存在[id=" + bomItemId + "]");
+            return Result.failure("BOM item not found: id=" + bomItemId);
         }
 
         if (StringUtils.isNotBlank(operIds)) {
@@ -177,15 +177,15 @@ public class SpFlowController extends BaseController {
     @ResponseBody
     public Result lockBom(String bomId) {
         if (StringUtils.isBlank(bomId)) {
-            return Result.failure("参数不能为空");
+            return Result.failure("parameters are required");
         }
         SpProductBom bom = productBomService.getById(bomId);
         if (bom == null) {
-            return Result.failure("BOM不存在");
+            return Result.failure("BOM not found");
         }
 
         if ("locked".equals(bom.getState())) {
-            return Result.failure("该BOM已锁定");
+            return Result.failure("BOM is already locked");
         }
 
         List<SpProductBomItem> items = bomItemService.list(
@@ -193,7 +193,7 @@ public class SpFlowController extends BaseController {
                         .eq("bom_id", bomId)
                         .eq("is_deleted", "0"));
         if (items.isEmpty()) {
-            return Result.failure("BOM下没有子项，无法锁定");
+            return Result.failure("BOM has no items and cannot be locked");
         }
 
         boolean hasUnbound = false;
@@ -204,7 +204,7 @@ public class SpFlowController extends BaseController {
             }
         }
         if (hasUnbound) {
-            return Result.failure("存在未规划工艺的BOM子项，请先完成所有子项的工艺规划");
+            return Result.failure("some BOM items do not have process planning");
         }
 
         bom.setState("locked");
@@ -224,14 +224,14 @@ public class SpFlowController extends BaseController {
     @ResponseBody
     public Result unlockBom(String bomId) {
         if (StringUtils.isBlank(bomId)) {
-            return Result.failure("参数不能为空");
+            return Result.failure("parameters are required");
         }
         SpProductBom bom = productBomService.getById(bomId);
         if (bom == null) {
-            return Result.failure("BOM不存在");
+            return Result.failure("BOM not found");
         }
         if (!"locked".equals(bom.getState())) {
-            return Result.failure("该BOM未锁定");
+            return Result.failure("BOM is not locked");
         }
         bom.setState("create");
         productBomService.updateById(bom);

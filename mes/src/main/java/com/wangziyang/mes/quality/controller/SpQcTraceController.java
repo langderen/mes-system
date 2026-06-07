@@ -3,16 +3,31 @@ package com.wangziyang.mes.quality.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wangziyang.mes.common.BaseController;
 import com.wangziyang.mes.common.Result;
-import com.wangziyang.mes.quality.entity.*;
-import com.wangziyang.mes.quality.service.*;
+import com.wangziyang.mes.quality.entity.SpQcActivity;
+import com.wangziyang.mes.quality.entity.SpQcInspectionData;
+import com.wangziyang.mes.quality.entity.SpQcInspectionDef;
+import com.wangziyang.mes.quality.entity.SpQcInspectionPlan;
+import com.wangziyang.mes.quality.entity.SpQcInspectionRecord;
+import com.wangziyang.mes.quality.entity.SpQcInspectionTask;
+import com.wangziyang.mes.quality.service.ISpQcActivityService;
+import com.wangziyang.mes.quality.service.ISpQcInspectionDataService;
+import com.wangziyang.mes.quality.service.ISpQcInspectionDefService;
+import com.wangziyang.mes.quality.service.ISpQcInspectionPlanService;
+import com.wangziyang.mes.quality.service.ISpQcInspectionRecordService;
+import com.wangziyang.mes.quality.service.ISpQcInspectionTaskService;
 import com.wangziyang.mes.system.entity.SysUser;
 import com.wangziyang.mes.system.service.ISysUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/quality/trace")
@@ -49,7 +64,7 @@ public class SpQcTraceController extends BaseController {
     public Result trace(String recordId, String taskId, String productCode, String planId) {
         if (StringUtils.isBlank(recordId) && StringUtils.isBlank(taskId)
                 && StringUtils.isBlank(productCode) && StringUtils.isBlank(planId)) {
-            return Result.failure("至少输入一个查询条件");
+            return Result.failure("at least one query condition is required");
         }
 
         List<Map<String, Object>> traceList = new ArrayList<>();

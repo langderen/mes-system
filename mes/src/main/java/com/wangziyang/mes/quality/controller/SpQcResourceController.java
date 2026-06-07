@@ -11,7 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/quality/resource")
@@ -58,10 +62,10 @@ public class SpQcResourceController extends BaseController {
     @ResponseBody
     public Result save(@RequestBody SpQcResource record) {
         if (StringUtils.isBlank(record.getResourceCode())) {
-            return Result.failure("资源编码不能为空");
+            return Result.failure("resource code is required");
         }
         if (StringUtils.isBlank(record.getResourceName())) {
-            return Result.failure("资源名称不能为空");
+            return Result.failure("resource name is required");
         }
         QueryWrapper<SpQcResource> wrapper = new QueryWrapper<SpQcResource>()
                 .eq("resource_code", record.getResourceCode())
@@ -70,7 +74,7 @@ public class SpQcResourceController extends BaseController {
             wrapper.ne("id", record.getId());
         }
         if (qcResourceService.count(wrapper) > 0) {
-            return Result.failure("资源编码已存在");
+            return Result.failure("resource code already exists");
         }
         qcResourceService.saveOrUpdate(record);
         return Result.success();
@@ -80,7 +84,7 @@ public class SpQcResourceController extends BaseController {
     @ResponseBody
     public Result get(String id) {
         SpQcResource resource = qcResourceService.getById(id);
-        return resource != null ? Result.success(resource) : Result.failure("数据不存在");
+        return resource != null ? Result.success(resource) : Result.failure("data not found");
     }
 
     @PostMapping("/delete")
