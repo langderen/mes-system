@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  mes-system:
+    image: openjdk:8-jdk-alpine
+    container_name: mes-system
+    ports:
+      - "80:9090"
+    environment:
+      - TZ=Asia/Shanghai
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mes2026?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=mes2026
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - FILE_UPLOAD_DIR=/upload
+    volumes:
+      - ./mes/target/mes-1.0.0.jar:/app.jar
+      - mes-upload:/upload
+    depends_on:
+      - mysql
+      - redis
+    restart: always
+    networks:
+      - mes-network
+    command: ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /app.jar"]
+
+  mysql:
+    image: mysql:5.7
+    container_name: mes-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mes2026
+      - MYSQL_DATABASE=mes2026
+      - TZ=Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./scripts/sql:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - mes-network
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  redis:
+    image: redis:6-alpine
+    container_name: mes-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+    networks:
+      - mes-network
+
+volumes:
+  mes-upload:
+  mysql-data:
+  redis-data:
+
+networks:
+  mes-network:
+    driver: bridge
