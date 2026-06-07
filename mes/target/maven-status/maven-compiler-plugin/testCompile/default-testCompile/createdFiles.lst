@@ -1,0 +1,9 @@
+com\wangziyang\mes\system\SysUserServiceUnitTest.class
+com\wangziyang\mes\production\DispatchOrderUnitTest.class
+com\wangziyang\mes\util\UtilUnitTest.class
+com\wangziyang\mes\system\SysRoleServiceUnitTest.class
+com\wangziyang\mes\util\TreeUtilUnitTest.class
+com\wangziyang\mes\basedata\MaterialInfoServiceUnitTest.class
+com\wangziyang\mes\common\CommonUnitTest.class
+com\wangziyang\mes\entity\EntityUnitTest.class
+com\wangziyang\mes\util\HttpUtilUnitTest.class
