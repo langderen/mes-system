@@ -186,6 +186,21 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+            <!-- Spring Boot Maven 插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.wangziyang.mes.SparchetypeApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Docker 插件 -->
             <plugin>
                 <!-- 三坐标 -->
