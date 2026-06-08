@@ -119,7 +119,16 @@
                     data = checkStatus.data;
                 if (data.length > 0) {
                     layer.confirm('确认要删除吗？', function (index) {
-
+                        var ids = [];
+                        $.each(data, function (i, item) { ids.push(item.id); });
+                        spUtil.ajax({
+                            url: '${request.contextPath}/admin/sys/department/delete',
+                            type: 'POST',
+                            showLoading: true,
+                            serializable: false,
+                            data: { id: ids.join(',') },
+                            success: function () { tableIns.reload(); layer.close(index); }
+                        });
                     });
                 } else {
                     layer.msg("请先选择需要删除的数据！");
@@ -156,8 +165,18 @@
             // 删除
             if (obj.event === 'delete') {
                 layer.confirm('确认要删除吗？', function (index) {
-                    obj.del();
-                    layer.close(index);
+                    spUtil.ajax({
+                        url: '${request.contextPath}/admin/sys/department/delete',
+                        async: false,
+                        type: 'POST',
+                        showLoading: true,
+                        serializable: false,
+                        data: { id: data.id },
+                        success: function () {
+                            tableIns.reload();
+                            layer.close(index);
+                        }
+                    });
                 });
             }
         });

@@ -78,4 +78,11 @@ public class SysDictController extends BaseController {
         sysDictService.saveOrUpdate(record);
         return Result.success(record.getId());
     }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public Result delete(SysDict record) {
+        sysDictService.removeById(record.getId());
+        return Result.success();
+    }
 }

@@ -63,6 +63,13 @@ public class SysMenuController extends BaseController {
         return Result.success(record.getId());
     }
 
+    @PostMapping("/delete")
+    @ResponseBody
+    public Result delete(SysMenu record) {
+        sysMenuService.removeById(record.getId());
+        return Result.success();
+    }
+
     @ApiOperation("系统管理菜单树表格数据")
     @GetMapping("/tree")
     @ResponseBody

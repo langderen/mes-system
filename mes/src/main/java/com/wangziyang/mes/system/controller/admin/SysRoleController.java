@@ -78,4 +78,11 @@ public class SysRoleController extends BaseController {
         sysRoleService.rebuildRoleMenu(record);
         return Result.success(record.getId());
     }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public Result delete(SysRole record) {
+        sysRoleService.removeById(record.getId());
+        return Result.success();
+    }
 }

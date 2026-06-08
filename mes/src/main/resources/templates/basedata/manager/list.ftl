@@ -130,7 +130,16 @@
                     data = checkStatus.data;
                 if (data.length > 0) {
                     layer.confirm('确认要删除吗？', function (index) {
-
+                        var ids = [];
+                        $.each(data, function (i, item) { ids.push(item.id); });
+                        spUtil.ajax({
+                            url: '${request.contextPath}/basedata/manager/delete/by/tableNameId',
+                            type: 'POST',
+                            showLoading: true,
+                            serializable: false,
+                            data: { id: ids.join(',') },
+                            success: function () { tableIns.reload(); layer.close(index); }
+                        });
                     });
                 } else {
                     layer.msg("请先选择需要删除的数据！");

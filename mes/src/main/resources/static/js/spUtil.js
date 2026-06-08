@@ -142,3 +142,21 @@ spUtil.sessionCheck = function (jqXHR, textStatus, errorThrown, sessionNoTip) {
 spUtil.generateUrl = function (url) {
     return url;
 };
+
+/**
+ * 将对象参数解析为URL查询字符串
+ * @param {Object} obj - 参数对象
+ * @returns {string} - URL查询字符串，如 "id=1&name=test"
+ */
+spUtil.parseParam = function (obj) {
+    if (!obj || typeof obj !== 'object') {
+        return '';
+    }
+    var params = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj[key] !== undefined && obj[key] !== null) {
+            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        }
+    }
+    return params.join('&');
+};

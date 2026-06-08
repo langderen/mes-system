@@ -92,4 +92,11 @@ public class SysUserController extends BaseController {
         }
         return Result.success(record.getId());
     }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public Result delete(SysUser record) {
+        sysUserService.removeById(record.getId());
+        return Result.success();
+    }
 }

@@ -175,6 +175,23 @@
 
     <build>
         <plugins>
+            <!-- Spring Boot 打包插件（必须） -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.1.7.RELEASE</version>
+                <configuration>
+                    <mainClass>com.wangziyang.mes.SparchetypeApplication</mainClass>
+                    <executable>true</executable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Maven Compiler 插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

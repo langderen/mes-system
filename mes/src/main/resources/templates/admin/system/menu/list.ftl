@@ -95,7 +95,24 @@
             var event = obj.event;
 
             if (event == 'del') {
-                layer.msg('点击了删除', {icon: 1});
+                layer.confirm('确认要删除吗？', function (index) {
+                    spUtil.ajax({
+                        url: '${request.contextPath}/admin/sys/menu/delete',
+                        async: false,
+                        type: 'POST',
+                        showLoading: true,
+                        serializable: false,
+                        data: { id: obj.data.id },
+                        success: function () {
+                            insTb.reqData({}, function (data) {
+                                insTb.reload({
+                                    data: data
+                                });
+                            });
+                            layer.close(index);
+                        }
+                    });
+                });
             }
 
             if (event == 'edit') {

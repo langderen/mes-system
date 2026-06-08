@@ -89,4 +89,11 @@ public class SysDepartmentController extends BaseController {
         }
         return Result.success(record.getId());
     }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public Result delete(SysDepartment record) {
+        sysDepartmentService.removeById(record.getId());
+        return Result.success();
+    }
 }

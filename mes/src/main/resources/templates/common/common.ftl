@@ -10,5 +10,5 @@
 <script src="${request.contextPath}/lib/jquery/jquery.min.js?v=v2.2.0" charset="utf-8"></script>
 <script src="${request.contextPath}/lib/layui/layui.js?v=v2.5.6" charset="utf-8"></script>
 <script src="${request.contextPath}/js/spConfig.js?v=1.0.0" charset="utf-8"></script>
-<script src="${request.contextPath}/js/spUtil.js?v=1.0.0" charset="utf-8"></script>
+<script src="${request.contextPath}/js/spUtil.js?v=1.0.1" charset="utf-8"></script>
 <script src="${request.contextPath}/js/layuimodule/config.js?v=1.0.0" charset="utf-8"></script>
