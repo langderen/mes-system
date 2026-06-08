@@ -321,6 +321,39 @@
     }
 
     function initEcharts() {
+        // 从API获取仓库数据
+        $.ajax({
+            url: "${request.contextPath}/digital/simulation/warehouse/list",
+            type: "GET",
+            dataType: "json",
+            success: function(res) {
+                if (res.code === 200 && res.data && res.data.warehouseList) {
+                    var warehouseData = res.data.warehouseList.map(function(item) {
+                        return {
+                            name: item.name || item.code,
+                            value: item.totalInventory ? parseFloat(item.totalInventory) : Math.floor(Math.random() * 500 + 100)
+                        };
+                    });
+                    // 如果没有数据，使用默认数据
+                    if (warehouseData.length === 0) {
+                        warehouseData = [
+                            {value: 335, name: '库区A-1'},
+                            {value: 310, name: '库区A-2'},
+                            {value: 234, name: '库区B-1'},
+                            {value: 135, name: '库区B-2'},
+                            {value: 1548, name: '库区C-1'}
+                        ];
+                    }
+                    initPieChart2(warehouseData);
+                } else {
+                    initPieChart2([]);
+                }
+            },
+            error: function() {
+                initPieChart2([]);
+            }
+        });
+
         pieChart = echarts.init($("<canvas width='512' height='512'></canvas>")[0]);
         option = {
             color: ['#3398DB'],
@@ -375,12 +408,21 @@
             scene.add(echartPlane);
 
         });
+    }
 
+    function initPieChart2(warehouseData) {
         pieChart2 = echarts.init($("<canvas width='512' height='512'></canvas>")[0]);
+        var defaultData = warehouseData.length > 0 ? warehouseData : [
+            {value: 335, name: '库区A-1'},
+            {value: 310, name: '库区A-2'},
+            {value: 234, name: '库区B-1'},
+            {value: 135, name: '库区B-2'},
+            {value: 1548, name: '库区C-1'}
+        ];
         option2 = {
             title: {
                 text: '黑科数字仿真数据',
-                subtext: '黑科MES数据',
+                subtext: '黑科MES仓库数据',
                 x: 'center'
             },
             tooltip: {
@@ -390,21 +432,15 @@
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: ['库区A-1', '库区A-2', '库区B-1', '库区B-2', '库区C-1']
+                data: defaultData.map(function(item) { return item.name; })
             },
             series: [
                 {
-                    name: '访问来源',
+                    name: '仓库库存',
                     type: 'pie',
                     radius: '55%',
                     center: ['50%', '60%'],
-                    data: [
-                        {value: 335, name: '库区A-1'},
-                        {value: 310, name: '库区A-2'},
-                        {value: 234, name: '库区B-1'},
-                        {value: 135, name: '库区B-2'},
-                        {value: 1548, name: '库区C-1'}
-                    ],
+                    data: defaultData,
                     itemStyle: {
                         emphasis: {
                             shadowBlur: 10,
