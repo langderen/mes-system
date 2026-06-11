@@ -2,30 +2,31 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>黑科-MES系统</title>
+    <title>MES系统</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon"/>
     <#include "${request.contextPath}/common/common.ftl">
     <script src="${request.contextPath}/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="${request.contextPath}/css/start.css" media="all">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         html, body {
             width: 100%;
             height: 100%;
-            overflow: hidden
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
         body:after {
             content: '';
             background-repeat: no-repeat;
             background-size: cover;
-            -webkit-filter: blur(3px);
-            -moz-filter: blur(3px);
-            -o-filter: blur(3px);
-            -ms-filter: blur(3px);
-            filter: blur(3px);
             position: absolute;
             top: 0;
             left: 0;
@@ -37,55 +38,85 @@
         .layui-container {
             width: 100%;
             height: 100%;
-            overflow: hidden
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .admin-login-background {
-            width: 360px;
-            height: 300px;
-            position: absolute;
-            left: 50%;
-            top: 40%;
-            margin-left: -180px;
-            margin-top: -100px;
+            width: 380px;
+            padding: 40px;
+            position: relative;
         }
 
         .logo-title {
             text-align: center;
-            letter-spacing: 2px;
-            padding: 14px 0;
+            margin-bottom: 30px;
         }
 
         .logo-title h1 {
             color: #fff;
-            font-size: 25px;
-            font-weight: bold;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo-title p {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            margin-top: 8px;
+            letter-spacing: 1px;
         }
 
         .login-form {
-            background-color: transparent;
-           border: 1px solid #fff;
-            border-radius: 3px;
-            padding: 14px 20px;
-           // box-shadow: 0 0 8px #eeeeee;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .login-form .layui-form-item {
             position: relative;
+            margin-bottom: 20px;
         }
 
         .login-form .layui-form-item label {
             position: absolute;
-            left: 1px;
-            top: 1px;
-            width: 38px;
-            line-height: 36px;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            line-height: 24px;
             text-align: center;
-            color: #d2d2d2;
+            color: rgba(255,255,255,0.8);
+            font-size: 18px;
+            z-index: 10;
         }
 
         .login-form .layui-form-item input {
-            padding-left: 36px;
+            padding-left: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .login-form .layui-form-item input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .login-form .layui-form-item input::placeholder {
+            color: rgba(255,255,255,0.6);
         }
 
         .captcha {
@@ -97,13 +128,67 @@
             display: inline-block;
             width: 34%;
             float: right;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .captcha-img:hover {
+            transform: scale(1.05);
         }
 
         .captcha-img img {
-            height: 34px;
-            border: 1px solid #e6e6e6;
-            height: 36px;
+            height: 42px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
             width: 100%;
+        }
+
+        .layui-form-item .layui-form-checkbox[lay-skin="primary"] {
+            margin-top: 0 !important;
+        }
+
+        .layui-form-item .layui-form-checkbox[lay-skin="primary"] span {
+            color: rgba(255,255,255,0.8) !important;
+            font-size: 13px;
+        }
+
+        .layui-form-item .layui-form-checked[lay-skin="primary"] span {
+            color: #fff !important;
+        }
+
+        .layui-btn-fluid {
+            height: 44px;
+            line-height: 44px;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #fff;
+            background: linear-gradient(145deg, #7a6fe0, #5d4fb3);
+            border: none;
+            border-radius: 22px;
+            box-shadow: -2px -2px 8px rgba(255, 255, 255, 0.1),
+                        -2px -2px 12px rgba(255, 255, 255, 0.05),
+                        inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                        2px 2px 8px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .layui-btn-fluid:hover {
+            box-shadow: inset -2px -2px 8px rgba(0, 0, 0, 0.2),
+                        inset -2px -2px 12px rgba(0, 0, 0, 0.15),
+                        inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                        inset 2px 2px 8px rgba(0, 0, 0, 0.25);
+            transform: none;
+        }
+
+        .layui-btn-fluid:active {
+            box-shadow: inset -2px -2px 8px rgba(0, 0, 0, 0.3),
+                        inset -2px -2px 12px rgba(0, 0, 0, 0.2),
+                        inset 2px 2px 4px rgba(255, 255, 255, 0.05),
+                        inset 2px 2px 8px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -114,7 +199,8 @@
         <div class="layui-form login-form">
             <form class="layui-form" action="">
                 <div class="layui-form-item logo-title">
-                    <h1>黑科-MES系统</h1>
+                    <h1>MES系统-登录</h1>
+                    <p>Manufacturing Execution System</p>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-username" for="username"></label>

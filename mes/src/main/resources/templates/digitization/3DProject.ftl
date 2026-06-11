@@ -321,7 +321,10 @@
     }
 
     function initEcharts() {
-        pieChart = echarts.init($("<canvas width='512' height='512'></canvas>")[0]);
+        var canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        pieChart = echarts.init(canvas);
         option = {
             color: ['#3398DB'],
             tooltip: {
@@ -376,7 +379,10 @@
 
         });
 
-        pieChart2 = echarts.init($("&lt;canvas width='512' height='512'&gt;&lt;/canvas&gt;")[0]);
+        var canvas2 = document.createElement('canvas');
+        canvas2.width = 512;
+        canvas2.height = 512;
+        pieChart2 = echarts.init(canvas2);
         
         // 默认数据
         var chartData = [
